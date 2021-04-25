@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.angela.bookstore.domain.Categoria;
 import com.angela.bookstore.dtos.CategoriaDTO;
 import com.angela.bookstore.repositories.CategoriaRepository;
+import com.angela.bookstore.service.exceptions.DataIntegrityViolationException;
 import com.angela.bookstore.service.exceptions.ObjectNotFoundException;
 
 @Service
@@ -39,7 +40,12 @@ public class CategoriaService {
 	}
 	public void delete(Integer id) {
 		findById(id);
-		repository.deleteById(id);
+		try {
+			repository.deleteById(id);
+		} catch (Exception e) {
+			throw new DataIntegrityViolationException(
+					"Categoria não pode ser deletada! Possui livros associados.");
+		}
 		
 	}
 
